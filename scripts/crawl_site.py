@@ -17,13 +17,14 @@ def main():
     ap.add_argument("--captcha", action="store_true")
     ap.add_argument("--captcha-wait", type=int, default=25)
     ap.add_argument("--captcha-post-wait", type=float, default=0.0)
-
+    ap.add_argument("--ignore-robots", action="store_true", help="Do not respect robots.txt (use with caution)")
     ap.add_argument("--headed", action="store_true")
     ap.add_argument("--throttle-ms", type=int, default=200)
     args = ap.parse_args()
 
     cfg = Config(
         out_root=args.out,
+        obey_robots=(not args.ignore_robots),
         headless=(not args.headed),
         include_subdomains=args.include_subdomains,
         max_pages=args.max_pages,

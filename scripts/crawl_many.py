@@ -22,6 +22,7 @@ def load_sites(args):
 def make_cfg(a):
     return Config(
         out_root=a.out,
+        obey_robots = (not a.ignore_robots),
         headless=(not a.headed),
         include_subdomains=a.include_subdomains,
         max_pages=a.max_pages,
@@ -59,6 +60,7 @@ async def main_async(a):
 
 def main():
     ap = argparse.ArgumentParser(description="Crawl MANY sites and download images.")
+    ap.add_argument("--ignore-robots", action="store_true", help="Do not respect robots.txt (use with caution)")
     ap.add_argument("--start", action="append")
     ap.add_argument("--list")
     ap.add_argument("--out", default="./dataset")

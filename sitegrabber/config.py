@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Config:
+    obey_robots: bool = True  # по умолчанию уважаем robots.txt
     out_root: str = "./dataset"
     user_agent: str = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
                        "AppleWebKit/537.36 (KHTML, like Gecko) "

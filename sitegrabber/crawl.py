@@ -45,8 +45,8 @@ class SiteCrawler:
 
     async def run(self):
         async with BrowserCtx(self.cfg.user_agent, self.cfg.headless) as ctx:
-            # robots
-            await self.robots.load(ctx)
+            if self.cfg.obey_robots:
+                await self.robots.load(ctx)
 
             # seed
             await self.to_visit.put((self.start_url, 0))
@@ -77,7 +77,7 @@ class SiteCrawler:
             return
         if page_url in self.seen_pages:
             return
-        if not self.robots.allowed(page_url):
+        if self.cfg.obey_robots and not self.robots.allowed(page_url):
             print(f"[ROBOTS] skip {page_url}")
             return
         if not is_same_site(page_url, self.start_url, self.cfg.include_subdomains):
