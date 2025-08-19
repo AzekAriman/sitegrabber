@@ -38,6 +38,14 @@ python -m scripts.crawl_site --start https://winestate.ru/ --out .\dataset --max
 * `--throttle-ms` — «вежливая» пауза между страницами (в миллисекундах).
 * `--min-bytes`, `--min-wh` — фильтры: отсекаем мелкие превью.
 
+### 1.2 С капчей — параметры и поведение
+
+* `--captcha` — включает «человеческий режим»: скрипт ищет признаки капчи (reCAPTCHA/hCaptcha/Turnstile/Cloudflare) и **ждёт**, пока ты её пройдёшь.
+* `--captcha-wait <сек>` — максимум секунд ожидания исчезновения капчи на странице. Если капча пропала раньше — продолжаем сразу.
+* `--captcha-post-wait <сек>` — доп.пауза после прохождения капчи, чтобы страница успела полностью догрузиться.
+* `--page-wait <сек>` — (опционально) пауза на **каждой** странице до парсинга; полезно на агрессивных сайтах.
+* `--captcha-depths <список>` — (если включено в конфиг) глубины, на которых ждать капчу, например `--captcha-depths 1` или `--captcha-depths 0,1`.
+
 ---
 
 ## 2) Режим «много сайтов списком» (sites.txt)
@@ -125,6 +133,12 @@ python -m scripts.crawl_site --start https://example.com/ --out .\dataset --max-
 
 ```powershell
 python -m scripts.crawl_site --start https://example.com/ --out .\dataset --max-pages 5000 --max-depth 6 --concurrency 1 --include-subdomains --headed --throttle-ms 1200 --min-bytes 12000 --min-wh 180 180
+```
+
+**Один сайт с капчей (ручной проход):**
+
+```powershell
+python -m scripts.crawl_site --start https://example.com/ --out .\dataset --max-pages 5000 --max-depth 6 --concurrency 1 --include-subdomains --headed --throttle-ms 1200 --captcha --captcha-wait 90 --captcha-post-wait 15 --min-bytes 10000 --min-wh 180 180
 ```
 
 **Много сайтов без капчи:**
