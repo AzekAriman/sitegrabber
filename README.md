@@ -115,13 +115,13 @@ python -m scripts.crawl_many --list .\sites.txt --out .\dataset --max-pages 300 
 
 ## 5) Быстрые пресеты
 
-**Быстрый тест (минутный прогон):**
+**Быстрый тест:**
 
 ```powershell
 python -m scripts.crawl_site --start https://example.com/ --out .\dataset --max-pages 30 --max-depth 3 --concurrency 1 --include-subdomains --headed --throttle-ms 1200
 ```
 
-**Глубокий сбор одного сайта (вежливо):**
+**Глубокий сбор одного сайта:**
 
 ```powershell
 python -m scripts.crawl_site --start https://example.com/ --out .\dataset --max-pages 5000 --max-depth 6 --concurrency 1 --include-subdomains --headed --throttle-ms 1200 --min-bytes 12000 --min-wh 180 180
