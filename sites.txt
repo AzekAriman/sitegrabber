@@ -1,0 +1,6 @@
+@"
+https://cs.money/
+https://www.museum-arms.ru/collections/
+https://pifpafgun.ru/
+https://vetapteki.by/
+"@ | Set-Content .\sites.txt -Encoding UTF8
