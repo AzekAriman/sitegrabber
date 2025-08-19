@@ -3,7 +3,6 @@ import asyncio
 from pathlib import Path
 from typing import Set, Tuple
 from asyncio import QueueEmpty
-
 from .browser import BrowserCtx
 from .config import Config
 from .manifest import ManifestWriter
@@ -14,6 +13,7 @@ from .utils import ensure_dir, is_same_site, domain_folder, norm_join
 
 class SiteCrawler:
     def _drain_queue(self):
+        """Очистить очередь to_visit (чтобы не висеть на join())."""
         drained = 0
         while True:
             try:
@@ -167,11 +167,19 @@ class SiteCrawler:
             await page.close()
 
     async def run_in_ctx(self, ctx):
-        # как run(), но используем уже открытый контекст браузера
         await self.robots.load(ctx)
         await self.to_visit.put((self.start_url, 0))
 
         workers = [asyncio.create_task(self.worker(ctx, i)) for i in range(self.cfg.concurrency)]
-        await self.to_visit.join()
-        for w in workers:
-            w.cancel()
+        try:
+            # обычное завершение — ждём, пока очередь опустеет
+            await self.to_visit.join()
+        finally:
+            # ВАЖНО: и при нормальном выходе, и при таймауте/отмене
+            # сбросить оставшиеся URL — иначе join() мог «держать» воркеров
+            self._drain_queue()
+
+            # аккуратно погасить воркеров
+            for w in workers:
+                w.cancel()
+            await asyncio.gather(*workers, return_exceptions=True)

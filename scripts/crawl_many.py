@@ -1,9 +1,9 @@
+from asyncio import wait_for, TimeoutError  # вверху файла
 import argparse, asyncio
 from time import sleep
 from sitegrabber.config import Config
 from sitegrabber.crawl import SiteCrawler
 from sitegrabber.browser import BrowserCtx
-from asyncio import wait_for
 
 def load_sites(args):
     sites = []
@@ -50,10 +50,12 @@ async def main_async(a):
             crawler = SiteCrawler(url, cfg)
             try:
                 await wait_for(crawler.run_in_ctx(ctx), timeout=a.site_timeout)
+            except TimeoutError:
+                print(f"[SITE TIMEOUT] {url} after {a.site_timeout}s — moving on.", flush=True)
             finally:
                 await crawler.close()
-            print(f"[SITE DONE] {url}", flush=True)
-            await asyncio.sleep(a.pause_between_sites)
+                print(f"[SITE DONE] {url}", flush=True)
+                await asyncio.sleep(a.pause_between_sites)
 
 def main():
     ap = argparse.ArgumentParser(description="Crawl MANY sites and download images.")
